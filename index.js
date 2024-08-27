@@ -40,6 +40,17 @@ async function run() {
             res.send(result);
         })
 
+        //get a specific users toys
+        app.get('/mytoys', async(req, res)=> {
+            let query = {}
+            if(req.query?.email){
+                query = {email: req.query.email};
+            }
+            const cursor = toysCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
         //get a toy
         app.get('/toys/:id', async(req, res)=> {
             const id = req.params.id;
@@ -52,6 +63,7 @@ async function run() {
         //add a toy to database
         app.post('/addtoys', async(req, res)=> {
             const toy = req.body;
+            console.log(toy);
             const result = await toysCollection.insertOne(toy);
             res.send(result);
         })
