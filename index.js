@@ -34,17 +34,17 @@ async function run() {
         const toysCollection = client.db("toysDB").collection("toys");
 
         //get all toys
-        app.get('/toys', async(req, res)=> {
+        app.get('/toys', async (req, res) => {
             const cursor = toysCollection.find();
             const result = await cursor.toArray();
             res.send(result);
         })
 
         //get a specific users toys
-        app.get('/mytoys', async(req, res)=> {
+        app.get('/mytoys', async (req, res) => {
             let query = {}
-            if(req.query?.email){
-                query = {email: req.query.email};
+            if (req.query?.email) {
+                query = { email: req.query.email };
             }
             const cursor = toysCollection.find(query);
             const result = await cursor.toArray();
@@ -52,26 +52,43 @@ async function run() {
         })
 
         //get a toy
-        app.get('/toys/:id', async(req, res)=> {
+        app.get('/toys/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id : new ObjectId(id)};
+            const query = { _id: new ObjectId(id) };
 
             const toy = await toysCollection.findOne(query);
             res.send(toy);
         })
 
         //add a toy to database
-        app.post('/addtoys', async(req, res)=> {
+        app.post('/addtoys', async (req, res) => {
             const toy = req.body;
             console.log(toy);
             const result = await toysCollection.insertOne(toy);
             res.send(result);
         })
 
-        //delete a toy using id
-        app.delete('/toys/:id', async(req, res)=> {
+        //update a toy using id
+        app.patch('/toys/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)};
+            const filter = { _id: new ObjectId(id) };
+
+            const updated = req.body;
+            const updateToy = {
+                $set: {
+                    price: updated.price,
+                    quantity: updated.quantity,
+                    description: updated.description,
+                },
+            };
+            const result = await toysCollection.updateOne(filter, updateToy);
+            res.send(result);
+        })
+
+        //delete a toy using id
+        app.delete('/toys/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
             const result = await toysCollection.deleteOne(query);
             res.send(result);
         })
