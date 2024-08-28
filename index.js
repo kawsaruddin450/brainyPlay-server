@@ -40,6 +40,17 @@ async function run() {
             res.send(result);
         })
 
+        //get all toys sorted
+        app.get('/toys/sorted', async(req, res)=> {
+            let sortBy = {price: 1};
+            if(parseInt(req?.query?.sort) === 0){
+                sortBy = {price: -1};
+            }
+            const cursor = toysCollection.find().sort(sortBy);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
         //get a specific users toys
         app.get('/mytoys', async (req, res) => {
             let query = {}
