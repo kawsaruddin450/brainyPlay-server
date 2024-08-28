@@ -60,6 +60,15 @@ async function run() {
             res.send(toy);
         })
 
+        //get a specific category toys
+        app.get('/categories/:category', async(req, res) => {
+            const category = req.params.category;
+            const query = {category: category};
+            const cursor = toysCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
         //add a toy to database
         app.post('/addtoys', async (req, res) => {
             const toy = req.body;
